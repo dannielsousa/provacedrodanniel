@@ -1,0 +1,42 @@
+version: "3.5"
+
+services:
+  postgres:
+    image: postgres
+    ports: 
+      - "5432:5432"
+    networks:
+      - "internal"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: asdf1234
+      POSTGRES_DB: db
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+
+  admin:
+    image: prova
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      POSTGRESQL_PASS: asdf1234
+      EXPOSED_PORT: 5432
+      EXPOSED_IP: 172.17.0.1
+    networks:
+      - "internal"
+    
+
+networks:
+  internal:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: "10.200.254.0/24"
+
+        
+volumes:
+  pgdata:
+    name: "db"
+    driver: local
+    external: false
